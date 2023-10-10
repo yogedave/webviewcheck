@@ -32,5 +32,104 @@
   <p>I'm hosted with GitHub Pages.</p>
   <a href="https://mywebviewapp//rekycscreen?custId=12345">Open Screen2 in App with product ID</a>
   <a href="https://mywebviewapp//rekycscreen?custId=12345">Open Screen2 in App with product ID</a> -->
+  <div>
+    import React, { useState } from 'react';
+import { Modal, View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
+
+const MyModalComponent = (props) => {
+  const [activeSlide, setActiveSlide] = useState(0); // For carousel pagination
+  const [isVisible, setIsVisible] = useState(false); // For modal visibility
+
+  // Mock data - replace with your actual data
+  const data = [
+    {
+      title: "Item 1",
+      description: "Description 1",
+      likes: 10,
+      dislikes: 2
+    },
+    // More items...
+  ];
+
+  // Render individual carousel items
+  const renderItem = ({ item }) => (
+    <View style={styles.slide}>
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.text}>{item.description}</Text>
+      <View style={styles.reactionRow}>
+        <Button title={`👍 ${item.likes}`} onPress={() => {}} />
+        <Button title={`👎 ${item.dislikes}`} onPress={() => {}} />
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <Button title="Open Modal" onPress={() => setIsVisible(true)} />
+
+      <Modal
+        visible={isVisible}
+        onRequestClose={() => setIsVisible(false)}
+        animationType="slide"
+      >
+        <View style={styles.modalContent}>
+          <Carousel
+            data={data}
+            renderItem={renderItem}
+            onSnapToItem={(index) => setActiveSlide(index)}
+            sliderWidth={SLIDER_WIDTH}
+            itemWidth={ITEM_WIDTH}
+          />
+          <Pagination
+            dotsLength={data.length}
+            activeDotIndex={activeSlide}
+            // Customize dot styles if needed
+          />
+          <Button title="Close" onPress={() => setIsVisible(false)} />
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  slide: {
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    borderRadius: 5,
+    // Add more styles for the carousel item if needed
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  text: {
+    fontSize: 16,
+  },
+  reactionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+  },
+  // Add more styles as needed
+});
+
+export default MyModalComponent;
+
+  </div>
 </body>
 </html>
