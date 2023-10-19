@@ -22,106 +22,48 @@
 
 <!-- Using a non-executable script tag to hold the code -->
 <script type="text/plain" class="code-container">
-  import React, { useState } from 'react';
-  import { View, StyleSheet, Animated, TouchableOpacity, Dimensions } from 'react-native';
-  import Svg, { Path } from 'react-native-svg';
-  import Icon from 'react-native-vector-icons/FontAwesome'; // for close icon
+  import React from 'react';
+  import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
   
-  const screenHeight = Dimensions.get('window').height;
-  
-  const MyCustomModal = () => {
-    const [visible, setVisible] = useState(false);
-    const [modalHeight] = useState(new Animated.Value(0)); // Initial modal height
-  
-    const openModal = () => {
-      setVisible(true);
-      Animated.timing(modalHeight, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: false,
-      }).start();
-    };
-  
-    const closeModal = () => {
-      Animated.timing(modalHeight, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: false,
-      }).start(() => {
-        setVisible(false);
-      });
-    };
-  
-    const interpolatedHeight = modalHeight.interpolate({
-      inputRange: [0, 1],
-      outputRange: [-screenHeight, 0], // Modal height from bottom
-    });
-  
-    if (!visible) {
-      return <TouchableOpacity onPress={openModal}><Text>Open Modal</Text></TouchableOpacity>;
-    }
-  
+  const CustomBackdrop = ({ children, onClose }) => {
     return (
-      <View style={styles.overlay}>
-        <Animated.View style={[styles.modal, { transform: [{ translateY: interpolatedHeight }] }]}>
-          <Svg height="60%" width="100%" viewBox="0 0 100 100" style={styles.svgCurve}>
-            <Path
-              d="M0 100 C50 0 50 0 100 100 Z" // simple curve shape
-              fill="#fff"
-              strokeWidth={1}
-            />
-          </Svg>
-          <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
-            <Icon name="close" size={30} color="#444" />
-          </TouchableOpacity>
-          <View style={styles.modalContent}>
-            {/* Your Modal Content */}
-          </View>
-        </Animated.View>
+      <View style={styles.backdrop}>
+        {children}
+        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <Text style={styles.closeButtonText}>X</Text> {/* Replace with an icon as needed */}
+        </TouchableOpacity>
       </View>
     );
   };
   
   const styles = StyleSheet.create({
-    overlay: {
-      ...StyleSheet.absoluteFillObject,
-      justifyContent: 'flex-end',
-      backgroundColor: 'rgba(0,0,0,0.5)', // semi-transparent background
-    },
-    modal: {
-      backgroundColor: 'transparent', // you might want to change this color
-      width: '100%',
-      height: screenHeight * 0.75, // 75% of screen height
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      overflow: 'hidden',
+    backdrop: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+      justifyContent: 'center',
       alignItems: 'center',
-      position: 'relative',
-    },
-    svgCurve: {
-      position: 'absolute',
-      width: '100%',
-      top: -1, // to hide the SVG's top edge
-      left: 0,
-      right: 0,
-      zIndex: 10,
+      padding: 10,
     },
     closeButton: {
       position: 'absolute',
-      top: 40, // adjust as per your curve's design
-      right: 30,
-      zIndex: 100, // to ensure it's above other elements
-    },
-    modalContent: {
-      flex: 1,
-      paddingTop: '35%', // depends on curve's height, adjust as needed
+      right: 20,
+      top: 20, // You may want to adjust this so the button is at the top of your modal
+      backgroundColor: 'red', // Just for visibility, use your own style
+      borderRadius: 15,
+      width: 30,
+      height: 30,
+      justifyContent: 'center',
       alignItems: 'center',
-      width: '100%',
-      // other styles
+      zIndex: 1, // Ensure this is above other items in the backdrop
+    },
+    closeButtonText: {
+      color: '#FFF',
+      fontSize: 20,
     },
   });
   
-  export default MyCustomModal;
+  export default CustomBackdrop;
+  
   
 </script>
 
