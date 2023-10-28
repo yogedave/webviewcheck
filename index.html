@@ -1,71 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Code Display Example</title>
-<style>
-    /* Style to make the code look a bit nicer */
-    .code-container {
-        background-color: #f4f4f4; /* Light grey background */
-        border: 1px solid #ddd; /* Grey border */
-        padding: 10px; /* Some padding */
-        white-space: pre-wrap; /* Preserves whitespace and line breaks */
-        word-break: keep-all; /* Prevents words from breaking */
-        font-family: "Courier New", Courier, monospace; /* Monospace font */
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Text</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #displayArea {
+            border: 1px solid #ddd;
+            height: 200px;
+            padding: 10px;
+            display: flex;
+            align-items: flex-end; /* Align text at the bottom */
+            resize: none;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
+    <textarea id="inputText" placeholder="Type your text here..."></textarea>
+    <button onclick="updateDisplay()">Display Text</button>
+    <div id="displayArea"></div>
 
-<h2>React Native Code Example:</h2>
-
-<!-- Using a non-executable script tag to hold the code -->
-<script type="text/plain" class="code-container">
-  import React from 'react';
-  import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-  
-  const CustomBackdrop = ({ children, onClose }) => {
-    return (
-      <View style={styles.backdrop}>
-        {children}
-        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-          <Text style={styles.closeButtonText}>X</Text> {/* Replace with an icon as needed */}
-        </TouchableOpacity>
-      </View>
-    );
-  };
-  
-  const styles = StyleSheet.create({
-    backdrop: {
-      flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 10,
-    },
-    closeButton: {
-      position: 'absolute',
-      right: 20,
-      top: 20, // You may want to adjust this so the button is at the top of your modal
-      backgroundColor: 'red', // Just for visibility, use your own style
-      borderRadius: 15,
-      width: 30,
-      height: 30,
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1, // Ensure this is above other items in the backdrop
-    },
-    closeButtonText: {
-      color: '#FFF',
-      fontSize: 20,
-    },
-  });
-  
-  export default CustomBackdrop;
-  
-  
-</script>
-
+    <script>
+        function updateDisplay() {
+            let inputText = document.getElementById('inputText').value;
+            document.getElementById('displayArea').textContent = inputText;
+        }
+    </script>
 </body>
 </html>
