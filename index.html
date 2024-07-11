@@ -31,9 +31,9 @@
         }
     </style>
     <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-app.js"></script>
     <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-firestore.js"></script>
 </head>
 <body>
     <textarea id="inputText" placeholder="Type your text here..."></textarea>
@@ -42,27 +42,15 @@
 
     <script>
         // Your web app's Firebase configuration
-        // const firebaseConfig = {
-        //     apiKey: "YOUR_API_KEY",
-        //     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        //     projectId: "YOUR_PROJECT_ID",
-        //     storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        //     messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        //     appId: "YOUR_APP_ID"
-        // };
-
         const firebaseConfig = {
-                    apiKey: "AIzaSyCYtHebXmuZZ4AgvUhBLBUFNAwgMMe6I1s",
-                    authDomain: "displaytext-7222f.firebaseapp.com",
-                    projectId: "displaytext-7222f",
-                    storageBucket: "displaytext-7222f.appspot.com",
-                    messagingSenderId: "347063965748",
-                    appId: "1:347063965748:web:5fdd3f2dc0173465b91261",
-                    measurementId: "G-GPVZ933WCP"
+            apiKey: "AIzaSyCYtHebXmuZZ4AgvUhBLBUFNAwgMMe6I1s",
+            authDomain: "displaytext-7222f.firebaseapp.com",
+            projectId: "displaytext-7222f",
+            storageBucket: "displaytext-7222f.appspot.com",
+            messagingSenderId: "347063965748",
+            appId: "1:347063965748:web:5fdd3f2dc0173465b91261",
+            measurementId: "G-GPVZ933WCP"
         };
-
-
-        
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -72,17 +60,29 @@
             let inputText = document.getElementById('inputText').value;
             document.getElementById('displayArea').textContent = inputText;
 
-            await db.collection('texts').doc('savedText').set({
-                text: inputText
-            });
+            try {
+                await db.collection('texts').doc('savedText').set({
+                    text: inputText
+                });
+                console.log('Text saved successfully.');
+            } catch (error) {
+                console.error('Error saving text: ', error);
+            }
         }
 
         async function loadSavedText() {
-            const doc = await db.collection('texts').doc('savedText').get();
-            if (doc.exists) {
-                const data = doc.data();
-                document.getElementById('inputText').value = data.text;
-                document.getElementById('displayArea').textContent = data.text;
+            try {
+                const doc = await db.collection('texts').doc('savedText').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('inputText').value = data.text;
+                    document.getElementById('displayArea').textContent = data.text;
+                    console.log('Text loaded successfully.');
+                } else {
+                    console.log('No saved text found.');
+                }
+            } catch (error) {
+                console.error('Error loading text: ', error);
             }
         }
 
