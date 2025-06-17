@@ -1,94 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display Text</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Display Text</title>
 
-        #displayArea {
-            border: 1px solid #ddd;
-            height: 200px;
-            padding: 10px;
-            display: flex;
-            align-items: flex-end; /* Align text at the bottom */
-            resize: none;
-        }
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #displayArea {
+      border: 1px solid #ddd;
+      height: 200px;
+      padding: 10px;
+      display: flex;
+      align-items: flex-end;   /* text sticks to bottom */
+      resize: none;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      margin-top: 20px;
+    }
+    button {
+      margin-top: 20px;
+    }
+  </style>
 
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 10px;
-            margin-top: 20px;
-        }
+  <!-- Supabase client (served from jsDelivr CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        button {
-            margin-top: 20px;
-        }
-    </style>
-    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script> -->
-    <!-- Firebase Firestore SDK -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script> -->
-    <script src="./vendor/firebase-app.js"></script>
-    <script src="./vendor/firebase-firestore.js"></script>
+  <script>
+    /* ---------- 1. Initialise Supabase ---------- */
+    const db = supabase.createClient(
+      'https://vpkgqswqkdfvywctkgmj.supabase.co',                            // ← your Project URL
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwa2dxc3dxa2Rmdnl3Y3RrZ21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxODI5ODYsImV4cCI6MjA2NTc1ODk4Nn0.h9eid4A4jDpl74QVRZG3EG00-CqUTuox4FA8SvjTcQ0' // ← anon public key
+    );
+
+    /* ---------- 2. Write text to DB and screen ---------- */
+    async function updateDisplay () {
+      const inputText = document.getElementById('inputText').value;
+      document.getElementById('displayArea').textContent = inputText;
+
+      const { error } = await db
+        .from('texts')
+        .upsert({ id: 'savedText', content: inputText });
+
+      if (error) {
+        console.error('Error saving text:', error);
+      } else {
+        console.log('Text saved successfully.');
+      }
+    }
+
+    /* ---------- 3. Load any previously saved text ---------- */
+    async function loadSavedText () {
+      const { data, error } = await db
+        .from('texts')
+        .select('content')
+        .eq('id', 'savedText')
+        .single();
+
+      if (data) {
+        document.getElementById('inputText').value        = data.content;
+        document.getElementById('displayArea').textContent = data.content;
+        console.log('Text loaded successfully.');
+      } else if (error && error.code !== 'PGRST116') {   /* ignore “no rows found” */
+        console.error('Error loading text:', error);
+      }
+    }
+
+    /* ---------- 4. Kick off initial load ---------- */
+    window.onload = loadSavedText;
+  </script>
 </head>
+
 <body>
-    <textarea id="inputText" placeholder="Type your text here..."></textarea>
-    <button onclick="updateDisplay()">Display Text</button>
-    <div id="displayArea"></div>
-
-    <script>
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCYtHebXmuZZ4AgvUhBLBUFNAwgMMe6I1s",
-            authDomain: "displaytext-7222f.firebaseapp.com",
-            projectId: "displaytext-7222f",
-            storageBucket: "displaytext-7222f.appspot.com",
-            messagingSenderId: "347063965748",
-            appId: "1:347063965748:web:5fdd3f2dc0173465b91261",
-            measurementId: "G-GPVZ933WCP"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        async function updateDisplay() {
-            let inputText = document.getElementById('inputText').value;
-            document.getElementById('displayArea').textContent = inputText;
-
-            try {
-                await db.collection('texts').doc('savedText').set({
-                    text: inputText
-                });
-                console.log('Text saved successfully.');
-            } catch (error) {
-                console.error('Error saving text: ', error);
-            }
-        }
-
-        async function loadSavedText() {
-            try {
-                const doc = await db.collection('texts').doc('savedText').get();
-                if (doc.exists) {
-                    const data = doc.data();
-                    document.getElementById('inputText').value = data.text;
-                    document.getElementById('displayArea').textContent = data.text;
-                    console.log('Text loaded successfully.');
-                } else {
-                    console.log('No saved text found.');
-                }
-            } catch (error) {
-                console.error('Error loading text: ', error);
-            }
-        }
-
-        window.onload = loadSavedText;
-    </script>
+  <textarea id="inputText" placeholder="Type your text here…"></textarea>
+  <button onclick="updateDisplay()">Display Text</button>
+  <div id="displayArea"></div>
 </body>
 </html>
